@@ -35,11 +35,13 @@ class StackCups(Task):
         random_idx = np.random.choice(len(colors))
         while random_idx == index:
             random_idx = np.random.choice(len(colors))
+        random_idx = 3
         _, other1_rgb = colors[random_idx]
 
         random_idx = np.random.choice(len(colors))
         while random_idx == index:
             random_idx = np.random.choice(len(colors))
+        random_idx = 3
         _, other2_rgb = colors[random_idx]
 
         self.cup2_visual.set_color(target_rgb)
@@ -47,11 +49,11 @@ class StackCups(Task):
         self.cup3_visaul.set_color(other2_rgb)
 
         self.boundary.clear()
-        self.boundary.sample(self.cup2, min_distance=0.05,
+        self.boundary.sample(self.cup2, min_distance=0.065,
                              min_rotation=(0, 0, 0), max_rotation=(0, 0, 0))
-        self.boundary.sample(self.cup1, min_distance=0.05,
+        self.boundary.sample(self.cup1, min_distance=0.065,
                              min_rotation=(0, 0, 0), max_rotation=(0, 0, 0))
-        self.boundary.sample(self.cup3, min_distance=0.05,
+        self.boundary.sample(self.cup3, min_distance=0.065,
                              min_rotation=(0, 0, 0), max_rotation=(0, 0, 0))
 
         return ['stack the other cups on top of the %s cup' % target_color_name,

@@ -11,7 +11,7 @@ from rlbench.const import colors
 
 MAX_STACKED_BLOCKS = 3
 DISTRACTORS = 4
-
+#DISTRACTORS = 0
 
 class StackBlocks(Task):
 
@@ -49,16 +49,21 @@ class StackBlocks(Task):
         ])
 
         self.blocks_stacked = 0
+
         color_choices = np.random.choice(
             list(range(color_index)) + list(
                 range(color_index + 1, len(colors))),
             size=2, replace=False)
+
         for i, ob in enumerate(self.distractors):
             name, rgb = colors[color_choices[int(i / 4)]]
+            rgb = (0.0, 0.0, 1.0)
             ob.set_color(rgb)
+
+
         b = SpawnBoundary(self.boundaries)
         for block in self.target_blocks + self.distractors:
-            b.sample(block, min_distance=0.1)
+            b.sample(block, min_distance=0.06)
 
         return ['stack %d %s blocks' % (self.blocks_to_stack, color_name),
                 'place %d of the %s cubes on top of each other'
@@ -89,11 +94,7 @@ class StackBlocks(Task):
         target = Shape('stack_blocks_target_plane')
         x, y, z = target.get_position()
         waypoint.get_waypoint_object().set_position(
-            [x, y, z + 0.08 + 0.06 * self.blocks_stacked + 0.05])
-
-    def _is_last(self, waypoint):
-        last = self.blocks_stacked == self.blocks_to_stack - 1
-        waypoint.skip = last
+            [x, y, z + 0.08 + 0.06 * self.blocks_stacked])
 
     def _is_last(self, waypoint):
         last = self.blocks_stacked == self.blocks_to_stack - 1
