@@ -22,7 +22,7 @@ class PlaceCups(Task):
             ProximitySensor('success_detector%d' % i) for i in range(3)]
         self._on_peg_conditions = [OrConditions([
             DetectedCondition(self._cups[ci], success_detectors[sdi]) for sdi in
-            range(3)]) for ci in range(3)]
+            range(3) for ci in range(3)])]
         self.register_graspable_objects(self._cups)
         self._initial_relative_cup = self._w1.get_pose(self._cups[0])
         self._initial_relative_spoke = self._w5.get_pose(self._spokes[0])
@@ -33,7 +33,7 @@ class PlaceCups(Task):
         b = SpawnBoundary([self._cups_boundary])
         [b.sample(c, min_distance=0.10) for c in self._cups]
         success_conditions = [NothingGrasped(self.robot.gripper)
-                              ] + self._on_peg_conditions[:index + 1]
+                              ] + self._on_peg_conditions
         self.register_success_conditions(success_conditions)
         self.register_waypoint_ability_start(
             0, self._move_above_next_target)
@@ -45,14 +45,14 @@ class PlaceCups(Task):
                     'move 1 mug from the table to the cup holder',
                     'pick up one cup and slide its handle onto a spoke on the '
                     'mug holder']
-        else:
-            return ['place %d cups on the cup holder' % (index + 1),
-                    'pick up %d cups and place them on the holder'
-                    % (index + 1),
-                    'move %d cups from the table to the mug tree'
-                    % (index + 1),
-                    'pick up %d mugs and slide their handles onto the cup '
-                    'holder spokes' % (index + 1)]
+        # else:
+        #     return ['place %d cups on the cup holder' % (index + 1),
+        #             'pick up %d cups and place them on the holder'
+        #             % (index + 1),
+        #             'move %d cups from the table to the mug tree'
+        #             % (index + 1),
+        #             'pick up %d mugs and slide their handles onto the cup '
+        #             'holder spokes' % (index + 1)]
 
     def variation_count(self) -> int:
         return 3
