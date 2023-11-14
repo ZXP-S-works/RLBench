@@ -234,7 +234,7 @@ def run(i, lock, task_index, variation_count, results, file_lock, tasks):
             var_target = task_env.variation_count()
             if FLAGS.variations >= 0:
                 var_target = np.minimum(FLAGS.variations, var_target)
-            if my_variation_count >= var_target:
+            if my_variation_count > var_target:
                 # If we have reached the required number of variations for this
                 # task, then move on to the next task.
                 variation_count.value = my_variation_count = 0
