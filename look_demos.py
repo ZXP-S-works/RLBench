@@ -35,7 +35,7 @@ env = Environment(
     headless=False)
 env.launch()
 
-task = env.get_task(PutPlateInColoredDishRack)
+task = env.get_task(StackWine)
 il = ImitationLearning()
 
 demos = task.get_demos(100, live_demos=live_demos)  # -> List[List[Observation]]
