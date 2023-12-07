@@ -5,7 +5,7 @@ args="
 --save_path=/home/zxp/projects/C2F_bi_equi/c2f_bi_equi_data/${train_val}
 --image_size=128,128
 --renderer=opengl
---episodes_per_task=100
+--episodes_per_task=10
 --processes=1
 --all_variations=False
 --variations=0
@@ -17,9 +17,9 @@ jn=${run_name}_${gpu}
 }
 
 task_names=(
+'place_wine_at_rack_location'
 'place_cups'
 'light_bulb_in'
-'place_wine_at_rack_location'
 'put_groceries_in_cupboard'
 'slide_block_to_color_target'
 'sweep_to_dustpan_of_size'
@@ -37,9 +37,9 @@ task_names=(
 'place_shape_in_shape_sorter'
 )
 
-for train_val in 'train' 'val'
+for tasks in "${task_names[@]}"
   do
-  for tasks in "${task_names[@]}"
+    for train_val in 'train' 'val'
     do
       run
       done

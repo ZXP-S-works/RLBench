@@ -8,7 +8,7 @@ from rlbench.tasks import StackWine,PlaceCups,PutKnifeInKnifeBlock,LampOn,StackB
     OpenDrawer,StackCups,InsertOntoSquarePeg, InsertUsbInComputer, PutRubbishInBin,\
     PutShoesInBox,CloseJar,EmptyContainer,HangFrameOnHanger,HitBallWithQueue, MeatOffGrill,PlaceShapeInShapeSorter, \
     PlugChargerInPowerSupply, PutBooksOnBookshelf, PutPlateInColoredDishRack, SetupCheckers, SweepToDustpan,\
-    PutAllGroceriesInCupboard
+    PutAllGroceriesInCupboard, PlaceWineAtRackLocation
 
 
 
@@ -34,8 +34,7 @@ env = Environment(
     obs_config=ObservationConfig(),
     headless=False)
 env.launch()
-
-task = env.get_task(StackWine)
+task = env.get_task(PlaceWineAtRackLocation)
 il = ImitationLearning()
 
 demos = task.get_demos(100, live_demos=live_demos)  # -> List[List[Observation]]
