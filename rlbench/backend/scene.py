@@ -76,7 +76,6 @@ class Scene(object):
 
         self.target_workspace_check = Dummy.create()
         self._step_callback = None
-
         self._robot_shapes = self.robot.arm.get_objects_in_tree(
             object_type=ObjectType.SHAPE)
 
@@ -254,7 +253,7 @@ class Scene(object):
                               wc_mask_fn) if wc_ob.mask else None
         front_mask = get_mask(self._cam_front_mask,
                               fc_mask_fn) if fc_ob.mask else None
-
+        # print('gripper_open_amt ', np.asarray(self.robot.gripper.get_open_amount()))
         obs = Observation(
             left_shoulder_rgb=left_shoulder_rgb,
             left_shoulder_depth=left_shoulder_depth,
@@ -286,8 +285,8 @@ class Scene(object):
                 if self._obs_config.joint_positions else None),
             joint_forces=(joint_forces
                           if self._obs_config.joint_forces else None),
-            gripper_open=(
-                (1.0 if np.asarray(self.robot.gripper.get_open_amount()).mean() > 0.95 else 0.0) # Changed from 0.9 to 0.95 because objects, the gripper does not close completely
+            gripper_open=(# Changed from 0.9 to 0.95 because objects, the gripper does not close completely
+                (1.0 if self.robot.gripper.open else 0.0)
                 if self._obs_config.gripper_open else None),
             gripper_pose=(
                 np.array(tip.get_pose())
@@ -338,6 +337,7 @@ class Scene(object):
                 'No waypoints were found.', self.task)
 
         demo = []
+        self._ignore_collisions_for_current_waypoint = waypoints[0]._ignore_collisions
         if record:
             self.pyrep.step()  # Need this here or get_force doesn't work...
             demo.append(self.get_observation())

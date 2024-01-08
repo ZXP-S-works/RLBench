@@ -8,7 +8,7 @@ from rlbench.tasks import StackWine,PlaceCups,PutKnifeInKnifeBlock,LampOn,StackB
     OpenDrawer,StackCups,InsertOntoSquarePeg, InsertUsbInComputer, PutRubbishInBin,\
     PutShoesInBox,CloseJar,EmptyContainer,HangFrameOnHanger,HitBallWithQueue, MeatOffGrill,PlaceShapeInShapeSorter, \
     PlugChargerInPowerSupply, PutBooksOnBookshelf, PutPlateInColoredDishRack, SetupCheckers, SweepToDustpan,\
-    PutAllGroceriesInCupboard, PlaceWineAtRackLocation, PutGroceriesInCupboard, LightBulbIn
+    PutAllGroceriesInCupboard, PlaceWineAtRackLocation, PutGroceriesInCupboard, LightBulbIn, SlideBlockToColorTarget
 
 
 
@@ -34,29 +34,28 @@ env = Environment(
     obs_config=ObservationConfig(),
     headless=False)
 env.launch()
-task = env.get_task(PlaceCups)
+task = env.get_task(SlideBlockToColorTarget)
 il = ImitationLearning()
 
-demos = task.get_demos(2, live_demos=live_demos)  # -> List[List[Observation]]
+demos = task.get_demos(10, live_demos=live_demos)  # -> List[List[Observation]]
 demos = np.array(demos).flatten()
 print(demos)
 
 import matplotlib.pyplot as plt
 
-gripper_open_history, ignore_collision_history = [], []
-demo = demos[0]
-for i in range(len(demo)):
-    gripper_open_history.append(demo[i].gripper_open)
-    ignore_collision_history.append(demo[i].ignore_collisions)
-gripper_open_history, ignore_collision_history = \
-    np.asarray(gripper_open_history), np.asarray(ignore_collision_history)
+for demo in demos:
+    gripper_open_history, ignore_collision_history = [], []
+    for i in range(len(demo)):
+        gripper_open_history.append(demo[i].gripper_open)
+        ignore_collision_history.append(demo[i].ignore_collisions)
+    gripper_open_history, ignore_collision_history = \
+        np.asarray(gripper_open_history), np.asarray(ignore_collision_history)
 
-plt.figure()
-
-plt.plot(gripper_open_history, label='gripper_open')
-plt.plot(ignore_collision_history, label='ignore_collision')
-plt.legend()
-plt.show()
+    plt.figure()
+    plt.plot(gripper_open_history, label='gripper_open')
+    plt.plot(ignore_collision_history, label='ignore_collision')
+    plt.legend()
+    plt.show()
 
 # An example of using the demos to 'train' using behaviour cloning loss.
 for i in range(10):
