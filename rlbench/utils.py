@@ -42,8 +42,9 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                      variation_number: int, task_name: str,
                      obs_config: ObservationConfig,
                      random_selection: bool = True,
-                     from_episode_number: int = 0) -> List[Demo]:
-
+                     from_episode_number: int = 0,
+                     is_real_world: bool = False) -> List[Demo]:
+    depth_scale = 1 if is_real_world else DEPTH_SCALE
     task_root = join(dataset_root, task_name)
     if not exists(task_root):
         raise RuntimeError("Can't find the demos for %s at: %s" % (
@@ -116,14 +117,17 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
 
         num_steps = len(obs)
 
-        if not (num_steps == len(listdir(l_sh_rgb_f)) == len(
-                listdir(l_sh_depth_f)) == len(listdir(r_sh_rgb_f)) == len(
-                listdir(r_sh_depth_f)) == len(listdir(oh_rgb_f)) == len(
-                listdir(oh_depth_f)) == len(listdir(wrist_rgb_f)) == len(
-                listdir(wrist_depth_f)) == len(listdir(front_rgb_f)) == len(
-                listdir(front_depth_f))):
-            print('broken dataset assuption')
-            #raise RuntimeError('Broken dataset assumption')
+        try:
+            if not (num_steps == len(listdir(l_sh_rgb_f)) == len(
+                    listdir(l_sh_depth_f)) == len(listdir(r_sh_rgb_f)) == len(
+                    listdir(r_sh_depth_f)) == len(listdir(oh_rgb_f)) == len(
+                    listdir(oh_depth_f)) == len(listdir(wrist_rgb_f)) == len(
+                    listdir(wrist_depth_f)) == len(listdir(front_rgb_f)) == len(
+                    listdir(front_depth_f))):
+                print('broken dataset assumption')
+                #raise RuntimeError('Broken dataset assumption')
+        except Exception as e:
+            print(e)
 
         for i in range(num_steps):
             # descriptions
@@ -212,7 +216,7 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                         _resize_if_needed(
                             Image.open(obs[i].left_shoulder_depth),
                             obs_config.left_shoulder_camera.image_size),
-                        DEPTH_SCALE)
+                        depth_scale)
                     near = obs[i].misc['left_shoulder_camera_near']
                     far = obs[i].misc['left_shoulder_camera_far']
                     l_sh_depth_m = near + l_sh_depth * (far - near)
@@ -227,7 +231,7 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                         _resize_if_needed(
                             Image.open(obs[i].right_shoulder_depth),
                             obs_config.right_shoulder_camera.image_size),
-                        DEPTH_SCALE)
+                        depth_scale)
                     near = obs[i].misc['right_shoulder_camera_near']
                     far = obs[i].misc['right_shoulder_camera_far']
                     r_sh_depth_m = near + r_sh_depth * (far - near)
@@ -242,7 +246,7 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                         _resize_if_needed(
                             Image.open(obs[i].overhead_depth),
                             obs_config.overhead_camera.image_size),
-                        DEPTH_SCALE)
+                        depth_scale)
                     near = obs[i].misc['overhead_camera_near']
                     far = obs[i].misc['overhead_camera_far']
                     oh_depth_m = near + oh_depth * (far - near)
@@ -257,7 +261,7 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                         _resize_if_needed(
                             Image.open(obs[i].wrist_depth),
                             obs_config.wrist_camera.image_size),
-                        DEPTH_SCALE)
+                        depth_scale)
                     near = obs[i].misc['wrist_camera_near']
                     far = obs[i].misc['wrist_camera_far']
                     wrist_depth_m = near + wrist_depth * (far - near)
@@ -272,7 +276,7 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
                         _resize_if_needed(
                             Image.open(obs[i].front_depth),
                             obs_config.front_camera.image_size),
-                        DEPTH_SCALE)
+                        depth_scale)
                     near = obs[i].misc['front_camera_near']
                     far = obs[i].misc['front_camera_far']
                     front_depth_m = near + front_depth * (far - near)
@@ -341,6 +345,6 @@ def get_stored_demos(amount: int, image_paths: bool, dataset_root: str,
 
 
 def _resize_if_needed(image, size):
-    if image.size[0] != size[0] or image.size[1] != size[1]:
-        image = image.resize(size)
+    # if image.size[0] != size[0] or image.size[1] != size[1]:
+    #     image = image.resize(size)
     return image
