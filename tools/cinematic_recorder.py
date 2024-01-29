@@ -102,7 +102,10 @@ class TaskRecorder(object):
         video = cv2.VideoWriter(
                 path, cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), self._fps,
                 tuple(self._cam_motion.cam.get_resolution()))
-        for image in self._snaps:
+        # for image in self._snaps:
+        for i, image in enumerate(self._snaps):
+            # path_i = path + '/{}/'.format() + str(i)
+            # cv2.imwrite(path, image)
             video.write(cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
         video.release()
         self._snaps = []
@@ -133,7 +136,7 @@ def main(argv):
     cam.set_pose(cam_placeholder.get_pose())
     cam.set_parent(cam_placeholder)
 
-    cam_motion = CircleCameraMotion(cam, Dummy('cam_cinematic_base'), 0.005)
+    cam_motion = CircleCameraMotion(cam, Dummy('cam_cinematic_base'), 0.00)
     tr = TaskRecorder(env, cam_motion, fps=30)
 
     if len(FLAGS.tasks) > 0:
@@ -144,6 +147,7 @@ def main(argv):
     task_classes = [task_file_to_task_class(
         task_file) for task_file in task_names]
 
+    # task_path = os.path.join(FLAGS.save_dir, name)
     for i, (name, cls) in enumerate(zip(task_names, task_classes)):
         good = tr.record_task(cls)
         if FLAGS.individual and good:
