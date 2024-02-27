@@ -1,12 +1,12 @@
 import os
 import sys
-paths = []
-for path in sys.path:
-    if path.find('RVT') != -1:
-        paths.append(path)
-print(paths)
-for path in paths:
-    sys.path.remove(path)
+# paths = []
+# for path in sys.path:
+#     if path.find('RVT') != -1:
+#         paths.append(path)
+# print(paths)
+# for path in paths:
+#     sys.path.remove(path)
 from typing import Type
 import numpy as np
 from absl import app
@@ -32,7 +32,7 @@ flags.DEFINE_string(
     'save_dir', './rlbench_videos/',
     'Where to save the generated videos.')
 flags.DEFINE_list(
-    'tasks', ['open_drawer'], 'The tasks to record. If empty, all tasks are recorded.')
+    'tasks', ['turn_tap'], 'The tasks to record. If empty, all tasks are recorded.')
 flags.DEFINE_boolean(
     'individual', True, 'One long clip of all the tasks, or individual videos.')
 flags.DEFINE_boolean(
@@ -92,7 +92,7 @@ class TaskRecorder(object):
         while True:
             try:
                 task.get_demos(
-                    1, live_demos=True, callable_each_step=self.take_snap,
+                    10, live_demos=True, callable_each_step=self.take_snap,
                     max_attempts=1)
                 break
             except RuntimeError:
@@ -104,7 +104,7 @@ class TaskRecorder(object):
 
     def save(self, path):
         print('Converting to video ...')
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        os.makedirs(path, exist_ok=True)
         # OpenCV QT version can conflict with PyRep, so import here
         import cv2
         # video = cv2.VideoWriter(
@@ -113,7 +113,7 @@ class TaskRecorder(object):
         # for image in self._snaps:
         for i, image in enumerate(self._snaps):
             path_i = path + f'/image_{i}.png'
-            cv2.imwrite(path_i, image)
+            cv2.imwrite(path_i, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
             # video.write(cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
         # video.release()
         self._snaps = []

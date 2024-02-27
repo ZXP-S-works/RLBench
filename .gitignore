@@ -117,3 +117,4 @@ dmypy.json
 .pyre/
 
 index.html
+/tools/rlbench_videos/
