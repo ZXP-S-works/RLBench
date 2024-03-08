@@ -137,12 +137,14 @@ class TaskEnvironment(object):
                             [Observation], None] = None,
                         max_attempts: int = _MAX_DEMO_ATTEMPTS) -> List[Demo]:
         demos = []
+        runs = 0
         for i in range(amount):
             attempts = max_attempts
             while attempts > 0:
                 random_seed = np.random.get_state()
                 self.reset()
                 try:
+                    runs += 1
                     demo = self._scene.get_demo(
                         callable_each_step=callable_each_step)
                     demo.random_seed = random_seed
@@ -154,6 +156,8 @@ class TaskEnvironment(object):
             if attempts <= 0:
                 raise RuntimeError(
                     'Could not collect demos. Maybe a problem with the task?')
+            if runs == amount:
+                print('success / tries', i, runs)
         return demos
 
     def reset_to_demo(self, demo: Demo) -> (List[str], Observation):

@@ -1,3 +1,4 @@
+import numpy as np
 from pyrep.const import ConfigurationPathAlgorithms as Algos
 from pyrep.objects.object import Object
 from pyrep.robots.configuration_paths.arm_configuration_path import (
@@ -42,15 +43,30 @@ class Waypoint(object):
             self._end_of_path_func(self)
 
 
+def discretize_trans(trans, trans_res=0.0104):
+    trans /= trans_res
+    trans = np.round(trans, 0)
+    trans *= trans_res
+    return trans
+
+
+def discretize_rot(rot, res_degree=7.5):
+    rot_res = res_degree / 180 * np.pi
+    rot /= rot_res
+    rot = np.round(rot, 0)
+    rot *= rot_res
+    return rot
+
+
 class Point(Waypoint):
 
     def get_path(self, ignore_collisions=False) -> ArmConfigurationPath:
         arm = self._robot.arm
         if self._linear_only:
             path = arm.get_linear_path(self._waypoint.get_position(),
-                                euler=self._waypoint.get_orientation(),
-                                ignore_collisions=(self._ignore_collisions or
-                                                   ignore_collisions))
+                                       euler=self._waypoint.get_orientation(),
+                                       ignore_collisions=(self._ignore_collisions or
+                                                          ignore_collisions))
         else:
             path = arm.get_path(self._waypoint.get_position(),
                                 euler=self._waypoint.get_orientation(),
@@ -60,6 +76,23 @@ class Point(Waypoint):
                                 max_configs=10,
                                 trials_per_goal=10,
                                 algorithm=Algos.RRTConnect)
+
+        # # to test descritization affect
+        # if self._linear_only:
+        #     path = arm.get_linear_path(discretize_trans(self._waypoint.get_position()),
+        #                                euler=discretize_rot(self._waypoint.get_orientation()),
+        #                                ignore_collisions=(self._ignore_collisions or
+        #                                                   ignore_collisions))
+        # else:
+        #     path = arm.get_path(discretize_trans(self._waypoint.get_position()),
+        #                         euler=discretize_rot(self._waypoint.get_orientation()),
+        #                         ignore_collisions=(self._ignore_collisions or
+        #                                            ignore_collisions),
+        #                         trials=100,
+        #                         max_configs=10,
+        #                         trials_per_goal=10,
+        #                         algorithm=Algos.RRTConnect)
+
         return path
 
 

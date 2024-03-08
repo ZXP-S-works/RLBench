@@ -35,37 +35,38 @@ env = Environment(
     obs_config=ObservationConfig(),
     headless=False)
 env.launch()
-task = env.get_task(StackWine)
+task = env.get_task(OpenDrawer)
 il = ImitationLearning()
 
-demos = task.get_demos(10, live_demos=live_demos)  # -> List[List[Observation]]
+demos = task.get_demos(20, live_demos=live_demos)  # -> List[List[Observation]]
 demos = np.array(demos).flatten()
 print(demos)
 
-import matplotlib.pyplot as plt
+# # plot gripper / collision history
+# import matplotlib.pyplot as plt
+#
+# for demo in demos:
+#     gripper_open_history, ignore_collision_history = [], []
+#     for i in range(len(demo)):
+#         gripper_open_history.append(demo[i].gripper_open)
+#         ignore_collision_history.append(demo[i].ignore_collisions)
+#     gripper_open_history, ignore_collision_history = \
+#         np.asarray(gripper_open_history), np.asarray(ignore_collision_history)
+#
+#     plt.figure()
+#     plt.plot(gripper_open_history, label='gripper_open')
+#     plt.plot(ignore_collision_history, label='ignore_collision')
+#     plt.legend()
+#     plt.show()
 
-for demo in demos:
-    gripper_open_history, ignore_collision_history = [], []
-    for i in range(len(demo)):
-        gripper_open_history.append(demo[i].gripper_open)
-        ignore_collision_history.append(demo[i].ignore_collisions)
-    gripper_open_history, ignore_collision_history = \
-        np.asarray(gripper_open_history), np.asarray(ignore_collision_history)
-
-    plt.figure()
-    plt.plot(gripper_open_history, label='gripper_open')
-    plt.plot(ignore_collision_history, label='ignore_collision')
-    plt.legend()
-    plt.show()
-
-# An example of using the demos to 'train' using behaviour cloning loss.
-for i in range(10):
-    print("'training' iteration %d" % i)
-    batch = np.random.choice(demos, replace=False)
-    batch_images = [obs.left_shoulder_rgb for obs in batch]
-    predicted_actions = il.predict_action(batch_images)
-    ground_truth_actions = [obs.joint_velocities for obs in batch]
-    loss = il.behaviour_cloning_loss(ground_truth_actions, predicted_actions)
+# # An example of using the demos to 'train' using behaviour cloning loss.
+# for i in range(10):
+#     print("'training' iteration %d" % i)
+#     batch = np.random.choice(demos, replace=False)
+#     batch_images = [obs.left_shoulder_rgb for obs in batch]
+#     predicted_actions = il.predict_action(batch_images)
+#     ground_truth_actions = [obs.joint_velocities for obs in batch]
+#     loss = il.behaviour_cloning_loss(ground_truth_actions, predicted_actions)
 
 print('Done')
 env.shutdown()
