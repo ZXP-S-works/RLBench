@@ -138,6 +138,7 @@ class TaskEnvironment(object):
                         max_attempts: int = _MAX_DEMO_ATTEMPTS) -> List[Demo]:
         demos = []
         runs = 0
+        success = 0
         for i in range(amount):
             attempts = max_attempts
             while attempts > 0:
@@ -149,15 +150,15 @@ class TaskEnvironment(object):
                         callable_each_step=callable_each_step)
                     demo.random_seed = random_seed
                     demos.append(demo)
+                    success += 1
                     break
                 except Exception as e:
                     attempts -= 1
                     logging.info('Bad demo. ' + str(e) + ' Attempts left: ' + str(attempts))
             if attempts <= 0:
-                raise RuntimeError(
-                    'Could not collect demos. Maybe a problem with the task?')
+                print('Could not collect demos. Maybe a problem with the task?')
             if runs == amount:
-                print('success / tries', i, runs)
+                print('success / tries', success, runs)
         return demos
 
     def reset_to_demo(self, demo: Demo) -> (List[str], Observation):

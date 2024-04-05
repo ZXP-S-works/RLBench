@@ -10,8 +10,18 @@ from rlbench.tasks import StackWine,PlaceCups,PutKnifeInKnifeBlock,LampOn,StackB
     PlugChargerInPowerSupply, PutBooksOnBookshelf, PutPlateInColoredDishRack, SetupCheckers, SweepToDustpan,\
     PutAllGroceriesInCupboard, PlaceWineAtRackLocation, PutGroceriesInCupboard, LightBulbIn, SlideBlockToColorTarget, \
     PutMoneyInSafe
+from rlbench.backend.utils import task_file_to_task_class
+import argparse
 
 
+# Create the parser
+parser = argparse.ArgumentParser()
+
+# Add an argument
+parser.add_argument('--task', type=str)
+
+# Parse the arguments
+args = parser.parse_args()
 
 class ImitationLearning(object):
 
@@ -35,12 +45,15 @@ env = Environment(
     obs_config=ObservationConfig(),
     headless=False)
 env.launch()
-task = env.get_task(OpenDrawer)
-il = ImitationLearning()
+# task = env.get_task(OpenDrawer)
+task = task_file_to_task_class(args.task)
+task = env.get_task(task)
 
-demos = task.get_demos(20, live_demos=live_demos)  # -> List[List[Observation]]
-demos = np.array(demos).flatten()
-print(demos)
+# il = ImitationLearning()
+
+demos = task.get_demos(100, live_demos=live_demos, max_attempts=1)  # -> List[List[Observation]]
+# demos = np.array(demos).flatten()
+# print(demos)
 
 # # plot gripper / collision history
 # import matplotlib.pyplot as plt
