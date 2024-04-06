@@ -43,15 +43,16 @@ env = Environment(
     action_mode=MoveArmThenGripper(
         arm_action_mode=JointVelocity(), gripper_action_mode=Discrete()),
     obs_config=ObservationConfig(),
-    headless=False)
+    headless=True)
 env.launch()
 # task = env.get_task(OpenDrawer)
+print(args.task)
 task = task_file_to_task_class(args.task)
 task = env.get_task(task)
 
 # il = ImitationLearning()
 
-demos = task.get_demos(100, live_demos=live_demos, max_attempts=1)  # -> List[List[Observation]]
+demos = task.get_demos(25, live_demos=live_demos, max_attempts=1)  # -> List[List[Observation]]
 # demos = np.array(demos).flatten()
 # print(demos)
 

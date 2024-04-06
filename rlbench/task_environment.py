@@ -157,8 +157,7 @@ class TaskEnvironment(object):
                     logging.info('Bad demo. ' + str(e) + ' Attempts left: ' + str(attempts))
             if attempts <= 0:
                 print('Could not collect demos. Maybe a problem with the task?')
-            if runs == amount:
-                print('success / tries', success, runs)
+        print('success / tries', success, runs)
         return demos
 
     def reset_to_demo(self, demo: Demo) -> (List[str], Observation):

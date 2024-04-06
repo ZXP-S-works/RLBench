@@ -58,6 +58,14 @@ def discretize_rot(rot, res_degree=15):
     return rot
 
 
+def perturb_trans(trans, trans_res=0.02):
+    return trans + (np.random.rand(3) - 0.5) * trans_res
+
+
+def perturb_rot(rot, res_degree=15):
+    rot_res = res_degree / 180 * np.pi
+    return rot + (np.random.rand(3) - 0.5) * rot_res
+
 class Point(Waypoint):
 
     def get_path(self, ignore_collisions=False) -> ArmConfigurationPath:
@@ -79,13 +87,13 @@ class Point(Waypoint):
 
         # to test descritization affect
         if self._linear_only:
-            path = arm.get_linear_path(discretize_trans(self._waypoint.get_position()),
-                                       euler=discretize_rot(self._waypoint.get_orientation()),
+            path = arm.get_linear_path(perturb_trans(self._waypoint.get_position()),
+                                       euler=perturb_rot(self._waypoint.get_orientation()),
                                        ignore_collisions=(self._ignore_collisions or
                                                           ignore_collisions))
         else:
-            path = arm.get_path(discretize_trans(self._waypoint.get_position()),
-                                euler=discretize_rot(self._waypoint.get_orientation()),
+            path = arm.get_path(perturb_trans(self._waypoint.get_position()),
+                                euler=perturb_rot(self._waypoint.get_orientation()),
                                 ignore_collisions=(self._ignore_collisions or
                                                    ignore_collisions),
                                 trials=100,
